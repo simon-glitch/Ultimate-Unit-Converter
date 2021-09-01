@@ -1,3 +1,5 @@
+alert("javscript!");
+
 var units;
 units = {
   types: {},
@@ -22,8 +24,11 @@ class Unit {
         options.className ||
         options["class"] ||
         units.defaultType,
-      name = options.type,
-      plura_Name =
+      name = options.type;
+    if (!name) {
+      console.error("Unit needs a name, and " + name + "is invalid!");
+    }
+    let plural_name =
         options.plural_name ||
         options.pluralName ||
         name.replace(/(\S+|)/, "&$s"),
@@ -53,7 +58,7 @@ class Unit {
         options.dimmensionalRepresentation ||
         options.dimmensionalEquation ||
         options.dimmensionalFormula,
-      absoluteValue =
+      abs_val =
         options.val ||
         options.value ||
         options.abs ||
@@ -84,8 +89,7 @@ class Unit {
         options.alternate_names ||
         options.alternateNames ||
         options.val ||
-        [],
-      isAlt = options.isAlternateName;
+        [];
     // that was ALOT of let declarations
     // now, some variables need to be converted into arrays if they are not ALREADY arrays
     if (!Array.isArray(alts)) alts = [alts];
@@ -97,7 +101,11 @@ class Unit {
     }
     type_obj.forms[name] = this;
     this.name = name;
-    this.multi = absoluteValue;
+    this.plural_name = plural_name;
+    this.abs_val = abs_val;
+    this.dims = dims;
+    this.about = about;
+    this.alts = alts;
   }
 }
 // the SI units are the basis for all other units
@@ -129,6 +137,17 @@ new Unit({
   type: "force",
   name: "newton"
 });
+
+units.findUnit = function (name) {
+  for (let i in units.types) {
+    for (let ii in units.types[i].forms) {
+      if (units.types[i].forms[ii].name === name) {
+        return units.types[i].forms[ii];
+      }
+    }
+  }
+  return null;
+};
 
 class converter {
   constructor(unit) {
